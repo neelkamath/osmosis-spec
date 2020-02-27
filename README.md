@@ -1,14 +1,14 @@
-<div style="text-align: center;">
-    <img src="branding/favicon.png" alt="Logo">
-</div>
+<center>
+    <img src="branding/logo.png" alt="Logo">
+</center>
 
 # Osmosis Spec
 
-For BMTC passengers who need better bus systems, Osmosis is an app that prevents conductors from making petty thefts, provides real time bus routes, and provides cashless transactions. Unlike the existing BMTC app, our product saves time and money.
+This is the specification for the improved BMTC ticketing system which is to be prototyped at [HackBout](https://www.hackbout.tech/). Branding assets are in the [`branding` directory](branding).
 
 ## Table of Contents
 
-1. [Description](docs/description/README.md)
+1. [Caveats](docs/caveats.md)
 1. [Business Viability](docs/business_viability.md)
 1. [Product Vision](docs/product_vision.md)
 1. [Objectives](docs/objectives.md)
