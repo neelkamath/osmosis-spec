@@ -1,15 +1,15 @@
 {
-  "fine": 20,
   // Amount to be added as a fine
-  "balance": 350,
+  "fine": 20,
   // The passenger's balance
+  "balance": 350,
+  // Bus routes
   "routes": [
-    // Bus routes
     {
-      "route": "blue",
       // Route name
+      "route": "blue",
+      // The bus will travel through the following stops in a cyclic order
       "stops": [
-        // The bus will travel through the following stops in a cyclic order
         {
           "name": "Silk Board",
           "longitude": 31.67,
@@ -26,8 +26,8 @@
           "latitude": 80.02
         }
       ],
+      // Cost matrix
       "costs": [
-        // Cost matrix
         [
           0,
           20,
@@ -87,10 +87,10 @@
     {
       "bus": "KAI5682",
       "route": "blue",
-      "longitude": 31.67,
       // Current longitude
-      "latitude": 78.54
+      "longitude": 31.67,
       // Current latitude
+      "latitude": 78.54
     },
     {
       "bus": "KAI9723",
@@ -99,40 +99,40 @@
       "latitude": 81.07
     }
   ],
+  // Past and ongoing tickets
   "tickets": [
-    // Past and ongoing tickets
     {
-      "bus": "KAI5682",
       // The bus the passenger is on
+      "bus": "KAI5682",
+      // Where and when the passenger got on
       "pickup": {
-        // Where and when the passenger got on
         "date": "2020-01-17",
         "time": "12:16",
         "location": "Banashankari"
       },
+      // Where and when the passenger got off, or will get off
       "drop": {
-        // Where and when the passenger got off, or will get off
+        // This will be null if the passenger receives a fine.
         "date": "2020-01-17",
         // This will be null if the passenger receives a fine.
         "time": "13:20",
         // This will be null if the passenger receives a fine.
         "location": "Silk Board"
-        // This will be null if the passenger receives a fine.
       },
       "transaction": {
-        "cash": true,
         // true if the passenger paid in cash, false if paid via the app
-        "tickets": 2,
+        "cash": true,
         // Number of tickets the passenger requested
-        "ongoing": false,
+        "tickets": 2,
         // Whether the passenger is currently traveling
+        "ongoing": false,
         /*
           This is whether the fee includes a fine the passenger had to pay. This will be null if the transaction hasn't
           ended yet.
         */
         "fined": false,
-        "fee": 60
         // This is how much the passenger paid. It will be null if the transaction is ongoing.
+        "fee": 60
       }
     },
     {

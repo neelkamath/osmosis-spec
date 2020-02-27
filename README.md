@@ -1,5 +1,5 @@
 <div style="text-align: center;">
-    <img src="branding/logo.png" alt="Logo">
+    <img src="branding/favicon.png" alt="Logo">
 </div>
 
 # Osmosis Spec
