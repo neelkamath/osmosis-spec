@@ -1,10 +1,10 @@
+image: node:lts
+
 test-spec:
-  image: node
   script: npx @stoplight/spectral lint openapi.yaml
 
 pages:
   stage: deploy
-  image: node
   script:
     - npx redoc-cli bundle openapi.yaml --title Osmosis
     - mkdir public
