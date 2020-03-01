@@ -1,0 +1,574 @@
+openapi: 3.0.2
+info:
+  title: Osmosis
+  version: '0'
+  description: |
+    Improved BMTC ticketing system.
+
+    The passenger, conductor, and admin app's endpoints make use of the `passenger`, `conductor`, and `admin` tags
+    respectively.
+  contact:
+    name: Neel Kamath
+    email: neelkamathonline@gmail.com
+    url: https://github.com/neelkamath/osmosis-spec
+  license:
+    name: MIT
+    url: https://github.com/neelkamath/osmosis-spec/blob/master/LICENSE
+servers:
+  - url: http://127.0.0.1:8080/
+    description: You'll have to run the server yourself
+paths:
+  /analytics/money:
+    get:
+      tags: [admin]
+      description: The amount of money transacted over the months.
+      operationId: moneyAnalytics
+      responses:
+        '200':
+          $ref: '#/components/responses/Money'
+  /analytics/passengers:
+    get:
+      tags: [admin]
+      description: Retrieves passenger count in different bus routes over the months. This would be useful for something
+        like a bar chart the admin could view.
+      operationId: passengerAnalytics
+      responses:
+        '200':
+          $ref: '#/components/responses/PassengerAnalytics'
+  /analytics/routes:
+    get:
+      tags: [admin]
+      description: Retrieves the passenger counts in every bus route for different times of the day for the last week.
+        This could be useful for displaying a heatmap for the admin.
+      operationId: routeAnalytics
+      responses:
+        '200':
+          $ref: '#/components/responses/RouteAnalytics'
+  /balance:
+    get:
+      tags: [passenger]
+      description: Retrieve the passenger's balance
+      operationId: getBalance
+      responses:
+        '200':
+          $ref: '#/components/responses/Balance'
+  /buses:
+    get:
+      tags: [passenger, admin]
+      description: Retrieves real time bus movements. Passengers could use this to find buses near them. Admins could
+        use this to view how many passengers are in particular buses.
+      operationId: buses
+      responses:
+        '200':
+          $ref: '#/components/responses/Buses'
+  /cash_transaction:
+    post:
+      description: Records a cash transaction a passenger made
+      tags: [conductor]
+      operationId: cashTransaction
+      requestBody:
+        required: true
+        $ref: '#/components/requestBodies/Fare'
+      responses:
+        '200':
+          description: Transaction recorded
+  /end_transaction:
+    post:
+      tags: [conductor]
+      description: Ends every transaction the passenger has on the current bus
+      operationId: endTransaction
+      requestBody:
+        required: true
+        $ref: '#/components/requestBodies/Bus'
+      responses:
+        '204':
+          description: Transactions ended
+  /journeys:
+    get:
+      tags: [passenger]
+      description: Retrieves the passenger's past and ongoing journeys
+      operationId: passengerTrips
+      responses:
+        '200':
+          $ref: '#/components/responses/PassengerJourneys'
+    post:
+      tags: [passenger]
+      description: Update the user's balance
+      operationId: updateBalance
+      requestBody:
+        required: true
+        $ref: '#/components/requestBodies/Balance'
+      responses:
+        '204':
+          description: Balance updated
+  /ongoing_transactions:
+    get:
+      tags: [conductor]
+      description: Retrieves the number of ongoing transactions the passenger has on the current bus
+      operationId: transactionCount
+      responses:
+        '200':
+          $ref: '#/components/responses/TransactionCount'
+  /request_fare:
+    get:
+      tags: [conductor]
+      description: Responds with the fare a passenger would pay to travel to a particular bus stop. This is useful for
+        passengers who pay by cash instead of using the app.
+      operationId: requestFare
+      requestBody:
+        required: true
+        $ref: '#/components/requestBodies/Fare'
+      responses:
+        '200':
+          $ref: '#/components/responses/Fare'
+  /start_transaction:
+    post:
+      tags: [conductor]
+      description: Starts a transaction (reports that a passenger got on the bus) for a passenger.
+      operationId: startTransaction
+      requestBody:
+        required: true
+        $ref: '#/components/requestBodies/Fare'
+      responses:
+        '204':
+          description: Transaction started
+        '402':
+          description: The transaction couldn't be started because the user has an insufficient balance.
+components:
+  requestBodies:
+    Balance:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Balance'
+    Bus:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Bus'
+    EndTransaction:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Bus'
+    Fare:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FareRequest'
+    StartTransaction:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Bus'
+  responses:
+    Balance:
+      description: The amount of money the passenger has in their account
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Balance'
+    Buses:
+      description: The metadata of every bus, such as its route and coordinates
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Buses'
+    Fare:
+      description: Amount to be paid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Fare'
+    Money:
+      description: The amount of money transacted over the months
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Money'
+    PassengerAnalytics:
+      description: Analytics on passengers
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PassengerAnalytics'
+    PassengerJourneys:
+      description: Passenger trips
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Journey'
+    RouteAnalytics:
+      description: Analytics on bus routes
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RouteAnalytics'
+    TransactionCount:
+      description: The number of ongoing transactions the user has on the current bus
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TransactionCount'
+  schemas:
+    Balance:
+      description: The passenger's balance
+      example:
+        balance: 350
+      type: object
+      properties:
+        balance:
+          type: number
+          minimum: 0
+      required: [balance]
+    Bus:
+      description: A bus's unique identifier
+      type: object
+      example:
+        bus: KAI8273
+      properties:
+        bus:
+          type: string
+          description: The bus's unique identifier
+      required: [bus]
+    Buses:
+      description: Real time bus movements on bus routes, and the costs between bus stops.
+      example:
+        buses:
+          - bus: KAI9723
+            route: green
+            longitude: 51.24
+            latitude: 81.07
+            seats: 50
+            passengers: 20
+          - bus: KAI3858
+            route: green
+            longitude: 50.34
+            latitude: 81.05
+            seats: 50
+            passengers: 10
+          - bus: KAI1298
+            route: blue
+            longitude: 57.22
+            latitude: 23.45
+            seats: 70
+            passengers: 17
+        routes:
+          - route: green
+            stops:
+              - name: Marenahalli
+                longitude: 50.22
+                latitude: 80.02
+              - name: BTM Layout
+                longitude: 51.24
+                latitude: 81.07
+              - name: Koramangala
+                longitude: 52.32
+                latitude: 83.02
+            costs:
+              - - 0
+                - 10
+                - 20
+              - - 30
+                - 0
+                - 10
+              - - 20
+                - 30
+                - 0
+      type: object
+      properties:
+        buses:
+          description: Data on every active bus
+          type: object
+          properties:
+            bus:
+              type: string
+              description: The bus's license plate number
+            route:
+              type: string
+              description: The name of the bus route
+            longitude:
+              type: number
+              description: Bus's current longitude
+            latitude:
+              type: number
+              description: Bus's current latitude
+            seats:
+              type: number
+              description: The number of occupied and unoccupied seats on the bus
+            passengers:
+              type: number
+              description: The number of passengers currently in the bus
+          required: [bus, route, longitude, latitude, seats, passengers]
+        routes:
+          type: array
+          description: Data on every bus route
+          items:
+            type: object
+            properties:
+              route:
+                type: string
+                description: Bus route name
+              stops:
+                type: array
+                description: Data on every bus stop in this bus route
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: The name of the bus stop
+                    longitude:
+                      type: number
+                      description: The longitude of the bus stop
+                    latitude:
+                      type: number
+                      description: The latitude of the bus stop
+                  required: [name, longitude, latitude]
+              costs:
+                type: array
+                description: Cost matrix of every bus stop to another
+                items:
+                  type: array
+                  description: The cost of every bus stop from this bus stop
+                  items:
+                    type: number
+            required: [route, stops, costs]
+      required: [buses, routes]
+    Fare:
+      type: object
+      example:
+        fare: 50
+      properties:
+        fare:
+          type: number
+          description: Amount to be paid
+      required: [fare]
+    FareRequest:
+      type: object
+      example:
+        bus: KAI3823
+        tickets: 2
+        start_stop: Silk Board
+        end_stop: Banashankari
+      properties:
+        bus:
+          type: string
+          description: The bus the passenger is traveling on
+        tickets:
+          type: number
+          minimum: 1
+          description: The number of tickets to bill for this journey
+        start_stop:
+          type: string
+          description: Which bus stop the passenger was picked up at
+        end_stop:
+          type: string
+          description: Which bus stop the passenger is to be dropped off at
+      required: [bus, tickets, start_stop, end_stop]
+    Journey:
+      example:
+        route: green
+        pickup:
+          date: 2020-02-25
+          time: 23:45
+          location: Silk Board
+        drop:
+          date: 2020-02-26
+          time: 01:25
+          location: Banashankari
+        transaction:
+          tickets: 2
+          ongoing: false
+          fine: 0
+          fare: 50
+      type: object
+      properties:
+        route:
+          type: string
+          description: The name of the bus route
+        pickup:
+          type: object
+          properties:
+            date:
+              type: string
+              description: Date of pickup
+            time:
+              type: string
+              description: Time of pickup
+            location:
+              type: string
+              description: Bus stop picked up at
+          required: [date, time, location]
+        drop:
+          type: object
+          properties:
+            date:
+              type: string
+              nullable: true
+              description: Date of drop-off; null if the journey is ongoing; null if the passenger was fined for not
+                ending the transaction during the drop-off
+            time:
+              type: string
+              nullable: true
+              description: Time of drop-off; null if the journey is ongoing; null if the passenger was fined for not
+                ending the transaction during the drop-off
+            location:
+              type: string
+              description: Bus stop dropped of at; null if the journey is ongoing; null if the passenger was fined for
+                not ending the transaction during the drop-off
+          required: [date, time, location]
+        transaction:
+          type: object
+          properties:
+            tickets:
+              type: number
+              minimum: 1
+              description: Number of tickets purchased
+            ongoing:
+              type: boolean
+              description: Whether this journey is currently in progress
+            fine:
+              type: number
+              nullable: true
+              description: null if the journey is ongoing; 0 if no fine was incurred; a natural number if a fine was
+                incurred
+            fare:
+              type: number
+              nullable: true
+              description: The total amount paid (inclusive of the fine); `null` if the journey is ongoing
+          required: [tickets, ongoing, fine, fare]
+      required: [route, pickup, drop, transaction]
+    Money:
+      example:
+        money:
+          - year: 2020
+            month: 0
+            money: 75000
+          - year: 2020
+            month: 1
+            money: 89005
+      type: object
+      properties:
+        money:
+          type: array
+          description: Money transacted over the months
+          items:
+            type: object
+            properties:
+              year:
+                type: number
+              month:
+                type: number
+                minimum: 0
+                maximum: 11
+                description: The month's number using zero-based indexing (`0` represents January).
+              money:
+                type: number
+                minimum: 0
+                description: The amount of money transacted for this month and year.
+            required: [year, month, money]
+      required: [money]
+    PassengerAnalytics:
+      example:
+        analytics:
+          - year: 2020
+            month: 0
+            route: green
+            passengers: 1057
+          - year: 2020
+            month: 0
+            route: blue
+            passengers: 3500
+          - year: 2020
+            month: 1
+            route: blue
+            passengers: 3756
+      type: object
+      properties:
+        analytics:
+          type: array
+          items:
+            type: object
+            properties:
+              year:
+                type: number
+              month:
+                type: number
+                minimum: 0
+                maximum: 11
+                description: A zero-based index indicating the month of the year (e.g., `1` is February)
+              route:
+                type: string
+                description: Bus route name
+              passengers:
+                type: number
+                minimum: 0
+                description: Number of passengers for the given month and year for this bus route
+            required: [year, month, route, passengers]
+      required: [analytics]
+    RouteAnalytics:
+      example:
+        routes:
+          - route: green
+            days:
+              - - 400
+                - 604
+                - 7842
+                - 222
+              - - 300
+                - 504
+                - 742
+                - 321
+              - - 303
+                - 522
+                - 652
+                - 121
+              - - 304
+                - 304
+                - 742
+                - 921
+              - - 220
+                - 664
+                - 752
+                - 322
+              - - 303
+                - 304
+                - 732
+                - 333
+              - - 245
+                - 664
+                - 842
+                - 221
+      type: object
+      properties:
+        routes:
+          type: array
+          description: Analytics on every route
+          items:
+            type: object
+            properties:
+              route:
+                type: string
+                description: The name of the bus route
+              days:
+                type: array
+                description: The days of the week using zero-based indexing (the first element is Sunday).
+                items:
+                  type: array
+                  description: The number of passengers at different times of this day. Each array element represents
+                    six hours of the day. The first, second, third, and fourth array elements represent 0:00-6:00,
+                    6:00-12:00, 12:00-18:00, and 18:00-24:00 respectively.
+                  items:
+                    type: number
+            required: [route, sunday, monday, tuesday, wednesday, thursday, friday, saturday]
+      required: [routes]
+    TransactionCount:
+      example:
+        transactions: 2
+      type: object
+      properties:
+        transactions:
+          type: number
+          description: The number of ongoing transactions
+      required: [transactions]

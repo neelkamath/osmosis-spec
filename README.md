@@ -4,18 +4,20 @@
 
 # Osmosis Spec
 
-This is the specification for the improved BMTC ticketing system which is to be prototyped at [HackBout](https://www.hackbout.tech/). Branding assets are in the [`branding` directory](branding).
+This is the specification for the improved BMTC ticketing system which is to be prototyped at [HackBout](https://www.hackbout.tech/). The project is named Osmosis because it helps transport people (osmosis biocheically means trasporting molecules). Branding assets are in the [`branding` directory](branding).
 
-## Table of Contents
+## Installation
 
-1. [Caveats](docs/caveats.md)
-1. [Business Viability](docs/business_viability.md)
-1. [Product Vision](docs/product_vision.md)
-1. [Objectives](docs/objectives.md)
-1. [Conductor’s App](docs/conductors_app/README.md)
-1. [Passenger's App](docs/passengers_app/README.md)
-1. [Admin's Panel](docs/admin_panel/README.md)
-1. [Database Schema](docs/db_schema/README.md)
+1. Install the latest [node.js LTS](https://nodejs.org/en/download/).
+1. Clone the repository using one of the following methods.
+    - SSH: `git clone git@github.com:neelkamath/osmosis-spec.git`
+    - HTTPS: `git clone https://github.com/neelkamath/osmosis-spec.git`
+
+## Usage
+
+### [Documentation](docs)
+
+### [OpenAPI Specification](openapi)
 
 ## License
 

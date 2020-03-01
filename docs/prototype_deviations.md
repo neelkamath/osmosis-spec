@@ -1,4 +1,4 @@
-# Caveats
+# Prototype Deviations
 
 The rest of the specification documents in this repository explain what the production application will behave like. However, only the major features will be implemented in the hackathon. This document explains the deviations made from the original idea for the sake of the hackathon's demo. Accounts may be left out, financial data may be left unencrypted, and less flexible technologies such as iOS may be replaced with more prototyping friendly ones such as the web.
 
@@ -10,25 +10,34 @@ At the end of the hackathon, before the judging starts, a presentation based off
     - Common
         - VCS: GitHub
     - Frontend
-        - Programming language: TSX
+        - Programming language: [TSX](http://www.typescriptlang.org/docs/handbook/jsx.html)
         - Templating language: HTML
         - Styling language: CSS
-        - Library: React
-        - Bundler: Parcel
-        - Hosting: Netlify
-        - UI components: rmwc
-        - QR code reader: instascan
-        - QR code generator: qart.js.
+        - Library: [React](https://reactjs.org/)
+        - Bundler: [Parcel](https://parceljs.org/)
+        - Hosting: [Netlify](https://www.netlify.com/)
+        - UI components: [rmwc](https://github.com/jamesmfriedman/rmwc)
+        - QR code reader: [instascan](https://github.com/schmich/instascan)
+        - QR code generator: [qart.js](https://github.com/kciter/qart.js)
     - Backend
         - Language: Kotlin
-        - Framework: ktor
+        - Framework: [ktor](https://ktor.io/)
+        - HTTP API tooling: OpenAPI
         - Deployment: Docker
         - DBMS: MongoDB
         - Server hosting: Heroku
         - DBMS hosting: mLab (through a Heroku addon)
-- The recommended technologies to use on the backend are Kotlin, Heroku
+- Bus movements will be faked server-side by updating bus locations automatically every 2 seconds to the coordinates of the next stop in their route.
+- Users will be fined if they don't end a transaction within 10 seconds (instead of 24 hours).
+- Passenger pickup and drop-off locations will be faked client-side by automatically randomly selecting a location on the current bus route.
 - Financial transactions will be faked using plain arithmetic. This will be stated during the demo.
-- The admin’s panel will implement the stated charts in order of priority. Assigning priorities will be up to the hacker, and will depend on how long it’ll take to learn and implement each chart. It is acceptable if a few of the admin panel’s features are missing in the case of time running out.
+- Admins will not be able to CRUD bus routes, they'll be hardcoded instead.
+- The admin panel will only display the following four analytics.
+    - The total money transacted all time, and a line chart displaying the amount of money transacted over the past months.
+    - A map of the real time locations of the buses, and how many passengers each one carries.
+    - Bar charts for every bus route displaying the number of passengers that have traveled them over the months.
+    - Every bus route will have its own heatmap. The heatmap will display the number of passengers who traveled the particular route. The rows and columns in the heatmap will be the times of the day and the last 7 days respectively.
+- The DB will be seeded with hardcoded data for analytics (e.g., the number of passengers traveling on different bus routes in the previous months).
 
 ## Database
 
@@ -144,7 +153,10 @@ Every document in the `buses` collection stores a bus's metadata. Here are two e
     // Current longitude
     "longitude": 31.67,
     // Current latitude
-    "latitude": 78.54
+    "latitude": 78.54,
+    // Number of seats (occupied and unoccupied) in the bus
+    "seats": 50,
+    "passengers": 20
 }
 ```
 
@@ -153,7 +165,9 @@ Every document in the `buses` collection stores a bus's metadata. Here are two e
     "bus": "KAI9723",
     "route": "green",
     "longitude": 51.24,
-    "latitude": 81.07
+    "latitude": 81.07,
+    "seats": 70,
+    "passengers": 75
 }
 ```
 
@@ -189,17 +203,17 @@ Here's an example of a completed transaction from a cash payer.
         // Whether the passenger is currently traveling
         "ongoing": false,
         /*
-        This is whether the fee includes a fine the passenger had to pay. This will be null if the transaction hasn't
-        ended yet.
+        This is the amount the passenger was fined. This will be null if the transaction hasn't
+        ended yet, 0 if the passenger wasn't fined, and a natural number if the user was fined.
         */
-        "fined": false,
+        "fine": 0,
         // This is how much the passenger paid. It will be null if the transaction is ongoing.
-        "fee": 60
+        "fare": 60
     }
 }
 ```
 
-Here's an example of a completed transaction paid via the app.
+Here's an example of an ongoing transaction paid via the app.
 ```json
 {
     "bus": "KAI5682",
@@ -217,8 +231,8 @@ Here's an example of a completed transaction paid via the app.
         "mode": "app",
         "tickets": 3,
         "ongoing": true,
-        "fined": null,
-        "fee": null
+        "fine": null,
+        "fare": null
     }
 }
 ```
@@ -241,8 +255,8 @@ Here's an example of a completed transaction of someone who paid via the app.
         "mode": "app",
         "tickets": 2,
         "ongoing": false,
-        "fined": false,
-        "fee": 50
+        "fine": 0,
+        "fare": 50
     }
 }
 ```
@@ -265,8 +279,8 @@ Here's an example of someone who was fined.
         "mode": "app",
         "tickets": 1,
         "ongoing": false,
-        "fined": true,
-        "fee": 60
+        "fine": 20,
+        "fare": 60
     }
 }
 ```
