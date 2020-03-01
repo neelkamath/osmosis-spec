@@ -69,13 +69,13 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/Fare'
       responses:
-        '200':
+        '204':
           description: Transaction recorded
   /end_transaction:
     post:
       tags: [conductor]
       description: Ends every transaction the passenger has on the current bus
-      operationId: endTransaction
+      operationId: endTransactions
       requestBody:
         $ref: '#/components/requestBodies/Bus'
       responses:
@@ -88,7 +88,7 @@ paths:
       operationId: passengerTrips
       responses:
         '200':
-          $ref: '#/components/responses/PassengerJourneys'
+          $ref: '#/components/responses/PassengerTrips'
     post:
       tags: [passenger]
       description: Update the user's balance
@@ -192,12 +192,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PassengerAnalytics'
-    PassengerJourneys:
+    PassengerTrips:
       description: Passenger trips
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Journey'
+            $ref: '#/components/schemas/Trips'
     RouteAnalytics:
       description: Analytics on bus routes
       content:
@@ -332,7 +332,6 @@ components:
                 description: Cost matrix of every bus stop to another
                 items:
                   type: array
-                  description: The cost of every bus stop from this bus stop
                   items:
                     type: number
             required: [route, stops, costs]
@@ -360,7 +359,8 @@ components:
         tickets:
           type: number
           minimum: 1
-          description: The number of tickets to bill for this journey
+          description: The number of tickets to bill for this journey. If a ticket was already billed, this will add
+            the specified number of tickets to the current number.
         start_stop:
           type: string
           description: Which bus stop the passenger was picked up at
@@ -368,79 +368,81 @@ components:
           type: string
           description: Which bus stop the passenger is to be dropped off at
       required: [bus, tickets, start_stop, end_stop]
-    Journey:
+    Trips:
       example:
-        route: green
-        pickup:
-          date: 2020-02-25
-          time: 23:45
-          location: Silk Board
-        drop:
-          date: 2020-02-26
-          time: 01:25
-          location: Banashankari
-        transaction:
-          tickets: 2
-          ongoing: false
-          fine: 0
-          fare: 50
+        trips:
+          - route: green
+            pickup:
+              date: 2020-02-25
+              time: 23:45
+              location: Silk Board
+            drop:
+              date: 2020-02-26
+              time: 01:25
+              location: Banashankari
+            tickets: 2
+            ongoing: false
+            fine: 0
+            fare: 50
       type: object
       properties:
-        route:
-          type: string
-          description: The name of the bus route
-        pickup:
-          type: object
-          properties:
-            date:
-              type: string
-              description: Date of pickup
-            time:
-              type: string
-              description: Time of pickup
-            location:
-              type: string
-              description: Bus stop picked up at
-          required: [date, time, location]
-        drop:
-          type: object
-          properties:
-            date:
-              type: string
-              nullable: true
-              description: Date of drop-off; null if the journey is ongoing; null if the passenger was fined for not
-                ending the transaction during the drop-off
-            time:
-              type: string
-              nullable: true
-              description: Time of drop-off; null if the journey is ongoing; null if the passenger was fined for not
-                ending the transaction during the drop-off
-            location:
-              type: string
-              description: Bus stop dropped of at; null if the journey is ongoing; null if the passenger was fined for
-                not ending the transaction during the drop-off
-          required: [date, time, location]
-        transaction:
-          type: object
-          properties:
-            tickets:
-              type: number
-              minimum: 1
-              description: Number of tickets purchased
-            ongoing:
-              type: boolean
-              description: Whether this journey is currently in progress
-            fine:
-              type: number
-              nullable: true
-              description: null if the journey is ongoing; 0 if no fine was incurred; a natural number if a fine was
-                incurred
-            fare:
-              type: number
-              nullable: true
-              description: The total amount paid (inclusive of the fine); `null` if the journey is ongoing
-          required: [tickets, ongoing, fine, fare]
-      required: [route, pickup, drop, transaction]
+        trips:
+          type: array
+          items:
+            type: object
+            properties:
+              route:
+                type: string
+                description: The name of the bus route
+              pickup:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    description: Date of pickup
+                  time:
+                    type: string
+                    description: Time of pickup
+                  location:
+                    type: string
+                    description: Bus stop picked up at
+                required: [date, time, location]
+              drop:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    nullable: true
+                    description: Date of drop-off; null if the journey is ongoing; null if the passenger was fined for not
+                      ending the transaction during the drop-off
+                  time:
+                    type: string
+                    nullable: true
+                    description: Time of drop-off; null if the journey is ongoing; null if the passenger was fined for not
+                      ending the transaction during the drop-off
+                  location:
+                    type: string
+                    description: Bus stop dropped of at; null if the journey is ongoing; null if the passenger was fined for
+                      not ending the transaction during the drop-off
+                required: [date, time, location]
+              tickets:
+                type: number
+                minimum: 1
+                description: Number of tickets purchased
+              ongoing:
+                type: boolean
+                description: Whether this journey is currently in progress
+              fine:
+                type: number
+                nullable: true
+                description: null if the journey is ongoing; 0 if no fine was incurred; a natural number if a fine was
+                  incurred
+              fare:
+                type: number
+                nullable: true
+                description: The total amount paid (inclusive of the fine); null if the journey is ongoing
+            required: [route, pickup, drop, tickets, ongoing, fine, fare]
+      required: [trips]
     Money:
       example:
         money:
@@ -555,12 +557,16 @@ components:
                 description: The name of the bus route
               days:
                 type: array
-                description: The days of the week using zero-based indexing (the first element is Sunday).
+                description: |
+                  Every top-level array element represents a day of the week using zero-based indexing (the first
+                  element is Sunday).
+
+                  Inside every array is another array. Every subarray's element represents the number of passengers that
+                  traveled this route during different times of this day. Each element represents six hours of the day.
+                  The first, second, third, and fourth elements represent 0:00-6:00, 6:00-12:00, 12:00-18:00, and
+                  18:00-24:00 respectively.
                 items:
                   type: array
-                  description: The number of passengers at different times of this day. Each array element represents
-                    six hours of the day. The first, second, third, and fourth array elements represent 0:00-6:00,
-                    6:00-12:00, 12:00-18:00, and 18:00-24:00 respectively.
                   items:
                     type: number
             required: [route, days]

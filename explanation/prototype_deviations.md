@@ -20,13 +20,13 @@ At the end of the hackathon, before the judging starts, a presentation based off
         - QR code reader: [instascan](https://github.com/schmich/instascan)
         - QR code generator: [qart.js](https://github.com/kciter/qart.js)
     - Backend
-        - Language: Kotlin
+        - Language: [Kotlin](https://kotlinlang.org/)
         - Framework: [ktor](https://ktor.io/)
-        - HTTP API tooling: OpenAPI
-        - Deployment: Docker
-        - DBMS: MongoDB
-        - Server hosting: Heroku
-        - DBMS hosting: mLab (through a Heroku addon)
+        - HTTP API tooling: [OpenAPI](https://www.openapis.org/)
+        - Deployment: [Docker](https://www.docker.com/)
+        - DBMS: [MongoDB](https://www.mongodb.com/)
+        - Server hosting: [Heroku](https://www.heroku.com/)
+        - DBMS hosting: [mLab](https://mlab.com/) (through the [Heroku addon](https://elements.heroku.com/addons/mongolab))
 - Bus movements will be faked server-side by updating bus locations automatically every 2 seconds to the coordinates of the next stop in their route.
 - Users will be fined if they don't end a transaction within 10 seconds (instead of 24 hours).
 - Passenger pickup and drop-off locations will be faked client-side by automatically randomly selecting a location on the current bus route.
