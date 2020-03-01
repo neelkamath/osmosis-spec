@@ -4,7 +4,7 @@
 
 # Osmosis Spec
 
-This is the specification for the improved BMTC ticketing system which is to be prototyped at [HackBout](https://www.hackbout.tech/). The project is named Osmosis because it helps transport people (osmosis biocheically means trasporting molecules). Branding assets are in the [`branding` directory](branding).
+This is the specification for the improved BMTC ticketing system which is to be prototyped at [HackBout](https://www.hackbout.tech/). The project is named Osmosis because it helps transport people (biochemically, osmosis is molecules being transported). Branding assets are in the [`branding` directory](branding).
 
 ## [Installation](docs/installation.md)
 
@@ -14,7 +14,7 @@ This is the specification for the improved BMTC ticketing system which is to be 
 
 This explains the idea technically in English with the aid of wireframes. It also states how the prototype will function differently from the real world implementation.
 
-We follow a naming strategy similar to major companies such as Uber. The suite of products (aka company, organization, etc.) will be called **Osmosis**. The passenger, conductor, and admin's apps will be named **Osmosis**, **Osmosis Conductor**, and **Osmosis Admin** respectively. The backend powering the apps will be named **Osmosis Server**.
+We follow a naming strategy similar to major companies such as Uber. The suite of products is called **Osmosis**. The passenger, conductor, and admin's apps are named **Osmosis**, **Osmosis Conductor**, and **Osmosis Admin** respectively. The backend is named **Osmosis Server**.
 
 1. [Product Vision](explanation/product_vision.md)
 1. [Objectives](explanation/objectives.md)
@@ -27,7 +27,7 @@ We follow a naming strategy similar to major companies such as Uber. The suite o
 
 ### OpenAPI Specification
 
-The [OpenAPI specification](docs/openapi.yaml) is meant for the prototype. You can view the HTTP API documentation [here](https://neelkamath.gitlab.io/osmosis-spec). While the backend developer is implementing the server, API consumers (e.g., a web frontend developer) can use the [mock server](docs/mock_server.md).
+The [OpenAPI specification](openapi.yaml) is meant for the prototype. You can view the HTTP API documentation [here](https://neelkamath.gitlab.io/osmosis-spec). While the backend developer is implementing the server, API consumers (e.g., a web frontend developer) can use the [mock server](docs/mock_server.md).
 
 ## [Contributing](docs/CONTRIBUTING.md)
 

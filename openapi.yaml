@@ -15,7 +15,7 @@ info:
     name: MIT
     url: https://github.com/neelkamath/osmosis-spec/blob/master/LICENSE
 servers:
-  - url: http://127.0.0.1:8080/
+  - url: http://127.0.0.1:8080
     description: You'll have to run the server yourself
 paths:
   /analytics/money:
@@ -67,7 +67,6 @@ paths:
       tags: [conductor]
       operationId: cashTransaction
       requestBody:
-        required: true
         $ref: '#/components/requestBodies/Fare'
       responses:
         '200':
@@ -78,7 +77,6 @@ paths:
       description: Ends every transaction the passenger has on the current bus
       operationId: endTransaction
       requestBody:
-        required: true
         $ref: '#/components/requestBodies/Bus'
       responses:
         '204':
@@ -96,7 +94,6 @@ paths:
       description: Update the user's balance
       operationId: updateBalance
       requestBody:
-        required: true
         $ref: '#/components/requestBodies/Balance'
       responses:
         '204':
@@ -116,7 +113,6 @@ paths:
         passengers who pay by cash instead of using the app.
       operationId: requestFare
       requestBody:
-        required: true
         $ref: '#/components/requestBodies/Fare'
       responses:
         '200':
@@ -127,7 +123,6 @@ paths:
       description: Starts a transaction (reports that a passenger got on the bus) for a passenger.
       operationId: startTransaction
       requestBody:
-        required: true
         $ref: '#/components/requestBodies/Fare'
       responses:
         '204':
@@ -137,26 +132,31 @@ paths:
 components:
   requestBodies:
     Balance:
+      required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Balance'
     Bus:
+      required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Bus'
     EndTransaction:
+      required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Bus'
     Fare:
+      required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/FareRequest'
     StartTransaction:
+      required: true
       content:
         application/json:
           schema:
@@ -279,27 +279,29 @@ components:
       properties:
         buses:
           description: Data on every active bus
-          type: object
-          properties:
-            bus:
-              type: string
-              description: The bus's license plate number
-            route:
-              type: string
-              description: The name of the bus route
-            longitude:
-              type: number
-              description: Bus's current longitude
-            latitude:
-              type: number
-              description: Bus's current latitude
-            seats:
-              type: number
-              description: The number of occupied and unoccupied seats on the bus
-            passengers:
-              type: number
-              description: The number of passengers currently in the bus
-          required: [bus, route, longitude, latitude, seats, passengers]
+          type: array
+          items:
+            type: object
+            properties:
+              bus:
+                type: string
+                description: The bus's license plate number
+              route:
+                type: string
+                description: The name of the bus route
+              longitude:
+                type: number
+                description: Bus's current longitude
+              latitude:
+                type: number
+                description: Bus's current latitude
+              seats:
+                type: number
+                description: The number of occupied and unoccupied seats on the bus
+              passengers:
+                type: number
+                description: The number of passengers currently in the bus
+            required: [bus, route, longitude, latitude, seats, passengers]
         routes:
           type: array
           description: Data on every bus route
@@ -561,7 +563,7 @@ components:
                     6:00-12:00, 12:00-18:00, and 18:00-24:00 respectively.
                   items:
                     type: number
-            required: [route, sunday, monday, tuesday, wednesday, thursday, friday, saturday]
+            required: [route, days]
       required: [routes]
     TransactionCount:
       example:

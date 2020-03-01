@@ -7,10 +7,18 @@
 ### Documentation
 
 ```
-npx redoc-cli serve --watch openapi/openapi.yaml
+npx redoc-cli serve --watch openapi.yaml
 ```
 
 This will serve and watch documentation on http://127.0.0.1:8080/.
+
+### Testing
+
+```
+npx @stoplight/spectral lint openapi.yaml
+```
+
+Tests the OpenAPI spec.
 
 ### [Mock Server](mock_server.md)
 
