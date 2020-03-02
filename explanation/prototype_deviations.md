@@ -14,6 +14,8 @@ At the end of the hackathon, before the judging starts, a presentation based off
         - Templating language: HTML
         - Styling language: CSS
         - Library: [React](https://reactjs.org/)
+        - Charts: [Google Charts](https://developers.google.com/chart/)
+        - Heatmaps: [calendar-heatmap](https://github.com/DKirwan/calendar-heatmap)
         - Bundler: [Parcel](https://parceljs.org/)
         - Hosting: [Netlify](https://www.netlify.com/)
         - UI components: [rmwc](https://github.com/jamesmfriedman/rmwc)
@@ -43,6 +45,8 @@ At the end of the hackathon, before the judging starts, a presentation based off
 
 Since we are not storing real data, simply persisting objects between program executions will suffice. Instead of using a real DBMS, MongoDB will be used as an object dump. There is no need to maintain uniqueness in trivial matters such as bus stops. It will neither break the application nor negatively affect the demo should two bus stops happen to use the same name.
 
+Datasets meant for seeding the DB are stored in the [datasets](../datasets) directory. The dataset directories are representative of MongoDB collections, and the individual JSON files are representative of MongoDB documents. Each of the following MongoDB collections' explanations will link to the relevant subdirectory if there is a need for that collection being seeded.
+
 A much simpler schema will be used. The amount to be added as a fine will be hardcoded to a value such as 20. Each of the following subheadings will document the structure of MongoDB collections and MongoDB documents.
 
 ### Balance
@@ -57,7 +61,11 @@ The `balance` collection will contain a single document holding the user's balan
 
 ### Bus Routes
 
-Every document in the `bus_routes` collection stores a bus route. Here are two examples.
+Every document in the `bus_routes` collection stores a bus route.
+
+To seed the DB with bus routes, see the [`bus_routes` directory](../datasets/bus_routes). Every JSON file is a bus route (e.g., blue).
+
+Here are two examples.
 
 ```json5
 {
@@ -144,7 +152,11 @@ Every document in the `bus_routes` collection stores a bus route. Here are two e
 
 ### Buses
 
-Every document in the `buses` collection stores a bus's metadata. Here are two examples.
+Every document in the `buses` collection stores a bus's metadata.
+
+To seed bus data, see the [`buses` directory](../datasets/buses). Each of its subdirectories (e.g., `blue_route`) holds the respective route's buses.
+
+Here are two examples.
 
 ```json5
 {
@@ -174,6 +186,8 @@ Every document in the `buses` collection stores a bus's metadata. Here are two e
 ### Tickets
 
 Every document in the `tickets` collection stores a single ticket.
+
+To seed tickets in the DB, see the [`tickets` directory](../datasets/tickets). Its [`app`](../datasets/tickets/app), [`cash`](../datasets/tickets/cash), and [`days`](../datasets/tickets/days) subdirectories represent tickets paid via the app, tickets paid in cash, and tickets paid in the last week respectively. The `days` directory contains tickets paid over a week (for the heatmap demo). In the `app` directory, there are directories named `completed`, `fined`, and `ongoing` which represent tickets paid without a fine, tickets paid with a fine, and pending transactions respectively. The `cash` directory similarly contains `completed` and `ongoing` directories.
 
 Here's an example of a completed transaction from a cash payer.
 ```json5
