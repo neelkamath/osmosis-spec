@@ -52,6 +52,15 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Balance'
+    patch:
+      tags: [passenger]
+      description: Update the user's balance
+      operationId: updateBalance
+      requestBody:
+        $ref: '#/components/requestBodies/Balance'
+      responses:
+        '204':
+          description: Balance updated
   /buses:
     get:
       tags: [passenger, admin]
@@ -89,15 +98,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/PassengerTrips'
-    post:
-      tags: [passenger]
-      description: Update the user's balance
-      operationId: updateBalance
-      requestBody:
-        $ref: '#/components/requestBodies/Balance'
-      responses:
-        '204':
-          description: Balance updated
   /ongoing_transactions:
     get:
       tags: [conductor]
