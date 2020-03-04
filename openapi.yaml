@@ -90,6 +90,14 @@ paths:
       responses:
         '204':
           description: Transactions ended
+  /health_check:
+    get:
+      tags: [status]
+      description: Checks if all systems are operational.
+      operationId: healthCheck
+      responses:
+        '204':
+          description: All systems are operational.
   /journeys:
     get:
       tags: [passenger]
