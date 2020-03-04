@@ -107,7 +107,7 @@ paths:
         '200':
           $ref: '#/components/responses/TransactionCount'
   /request_fare:
-    get:
+    post:
       tags: [conductor]
       description: Responds with the fare a passenger would pay to travel to a particular bus stop. This is useful for
         passengers who pay by cash instead of using the app.
