@@ -111,6 +111,8 @@ paths:
       tags: [conductor]
       description: Retrieves the number of ongoing transactions the passenger has on the current bus
       operationId: transactionCount
+      parameters:
+        - $ref: '#/components/parameters/Bus'
       responses:
         '200':
           $ref: '#/components/responses/TransactionCount'
@@ -138,6 +140,15 @@ paths:
         '402':
           description: The transaction couldn't be started because the user has an insufficient balance.
 components:
+  parameters:
+    Bus:
+      name: bus
+      in: query
+      description: Bus license number
+      required: true
+      schema:
+        type: string
+        example: KAI8273
   requestBodies:
     Balance:
       required: true
