@@ -131,7 +131,7 @@ paths:
       description: Starts a transaction (reports that a passenger got on the bus) for a passenger.
       operationId: startTransaction
       requestBody:
-        $ref: '#/components/requestBodies/Fare'
+        $ref: '#/components/requestBodies/StartFare'
       responses:
         '204':
           description: Transaction started
@@ -163,6 +163,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/FareRequest'
+    StartFare:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StartFareRequest'
     StartTransaction:
       required: true
       content:
@@ -376,6 +382,25 @@ components:
           type: string
           description: Which bus stop the passenger is to be dropped off at
       required: [bus, tickets, start_stop, end_stop]
+    StartFareRequest:
+      type: object
+      example:
+        bus: KAI3823
+        tickets: 2
+        start_stop: Silk Board
+      properties:
+        bus:
+          type: string
+          description: The bus the passenger is traveling on
+        tickets:
+          type: number
+          minimum: 1
+          description: The number of tickets to bill for this journey. If a ticket was already billed, this will add
+            the specified number of tickets to the current number.
+        start_stop:
+          type: string
+          description: Which bus stop the passenger was picked up at
+      required: [bus, tickets, start_stop]
     Trips:
       example:
         trips:
